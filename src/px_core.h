@@ -10,11 +10,13 @@ struct px_framebuffer{
 struct px_mouse{
     int16_t x;
     int16_t y;
-    uint8_t is_down;    
+    uint32_t is_down:1;
+    uint32_t left_button:1;
+    uint32_t right_button:1;
 };
 
 struct px_gui{
-    int is_run;
+    uint32_t is_run:1;
 
     struct px_framebuffer buf;
     struct px_mouse mouse;
@@ -23,7 +25,7 @@ struct px_gui{
     void *user;
 };
 
-SYMBOL_EXPORT int px_init(struct px_gui *gui);
+SYMBOL_EXPORT uint8_t px_init(struct px_gui *gui);
 
 SYMBOL_EXPORT void px_deinit(struct px_gui *gui);
 
@@ -33,9 +35,11 @@ SYMBOL_EXPORT void px_clear_buffer(struct px_gui *gui);
 
 SYMBOL_EXPORT void px_render(struct px_gui *gui);
 
-SYMBOL_EXPORT int px_is_run(struct px_gui *gui);
+SYMBOL_EXPORT uint8_t px_is_run(struct px_gui *gui);
 
 SYMBOL_EXPORT void px_delay(struct px_gui *gui);
+
+SYMBOL_EXPORT void px_printf(char* fmt, ...);
 
 #endif
 

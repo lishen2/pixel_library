@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\fonts\px_digit.c" />
     <ClCompile Include="..\..\src\impl\px_user_sdl2.c" />
     <ClCompile Include="..\..\src\px_core.c" />
     <ClCompile Include="..\..\src\px_widget.c" />

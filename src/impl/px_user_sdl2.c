@@ -13,7 +13,7 @@
 #include "px_user_func.h"
 
 /* SDL screen size  */
-#define PX_SDL_SCALE_FACTOR  6
+#define PX_SDL_SCALE_FACTOR  5
 
 struct px_sdl2_ctrl{
     SDL_Window *window;
@@ -31,7 +31,7 @@ struct px_sdl2_ctrl{
     uint32_t   colorPixel;
 };
 
-int px_user_init(struct px_gui *gui, int width, int height)
+uint8_t px_user_init(struct px_gui *gui, int width, int height)
 {
     struct px_sdl2_ctrl *ctrl;
     SDL_Window *window;
@@ -167,8 +167,15 @@ void px_user_poll_event(struct px_gui *gui)
             gui->mouse.y = e.motion.y / PX_SDL_SCALE_FACTOR;
         } else if (e.type == SDL_MOUSEBUTTONDOWN){
             gui->mouse.is_down = 1;
+            if (e.button.button == SDL_BUTTON_LEFT) {
+				gui->mouse.left_button = 1;
+			} else if (e.button.button == SDL_BUTTON_RIGHT){
+				gui->mouse.right_button = 1;
+			}
         } else if (e.type == SDL_MOUSEBUTTONUP){
             gui->mouse.is_down = 0;
+			gui->mouse.left_button = 0;
+			gui->mouse.right_button = 0;
         } else if (e.type == SDL_KEYDOWN) {
     	} else if (e.type == SDL_KEYUP) {
     		// If escape is pressed, return (and thus, quit)
@@ -230,4 +237,20 @@ void px_delay_at_least(struct px_gui *gui, int ms)
     
     return;
 }
+
+void px_printf(char* fmt, ...)
+{
+	char buf[256];
+	va_list ap;
+	int len;
+
+	memset(buf, 0, sizeof(buf));
+	va_start(ap, fmt);
+	len = vsnprintf(buf, sizeof(buf), fmt, ap);
+	va_end(ap);
+
+    printf(buf);
+    return;
+}
+
 

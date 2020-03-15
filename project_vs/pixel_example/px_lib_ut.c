@@ -7,7 +7,7 @@
 #include "px_core.h"
 #include "px_widget.h"
 #include "px_user_func.h"
-#include "SDL2/SDL.h"
+#include "mine_widget.h"
 
 #define TEST_ASSERT(exp, ...)\
     if (!(exp)){\
@@ -56,8 +56,8 @@ static void _basic_widget(void)
         }
 
         px_clear_buffer(&gui);
-		px_widget_render_fill(&widget, 0xFF);
-		//px_widget_render_borader(&widget, 1, 0xFF);
+		//px_widget_render_fill(&widget, 0xFF);
+		px_widget_render_borader(&widget, 2, 0xFF);
         px_render(&gui);
 
         px_delay(&gui);
@@ -66,10 +66,48 @@ static void _basic_widget(void)
 	px_deinit(&gui);
 }
 
-int main(int argc, char* argv[])
+static void _mine_widget(void)
 {
-    //_basic_render();
-    _basic_widget();
+    struct px_gui gui;
+    struct mine_widget widget;
+    int ret;
+    int state;
+
+    ret = px_init(&gui);
+    TEST_ASSERT(0 == ret, "");    
+
+    mine_widget_init(&gui, &widget, 50, 30, 5, 5);
+
+	state = 0;
+    mine_widget_set_state(&widget, state);
+    
+    while(1 == px_is_run(&gui)){
+ 
+        px_poll_event(&gui);
+
+        if (1 == mine_widget_event_left_click(&widget)){
+            mine_widget_set_state(&widget, state);
+            state += 1;
+			if (state >= MINE_STATE_MAX_SIZE) {
+				state = 0;
+			}
+        }
+
+        px_clear_buffer(&gui);
+        mine_widget_render(&widget);
+        px_render(&gui);
+
+        px_delay(&gui);
+    }
+
+	px_deinit(&gui);
+
+}
+
+int main3(int argc, char* argv[])
+{
+    //_basic_widget();
+    _mine_widget();
 
     return 0;
 }

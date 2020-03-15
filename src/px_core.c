@@ -6,14 +6,23 @@
 #include "px_core.h"
 #include "px_user_func.h"
 
-int px_init(struct px_gui *gui)
+uint8_t px_init(struct px_gui *gui)
 {
+    uint8_t ret;
+    
     memset(gui, 0, sizeof(*gui));
-    gui->is_run = 1;
+    
 	gui->buf.width = PX_SCREEN_WIDTH;
 	gui->buf.height = PX_SCREEN_HEIGHT;
 
-    return px_user_init(gui, PX_SCREEN_WIDTH, PX_SCREEN_HEIGHT);
+    ret = px_user_init(gui, PX_SCREEN_WIDTH, PX_SCREEN_HEIGHT);
+    if (RET_OK == ret){
+        gui->is_run = 1;
+    } else {
+        gui->is_run = 0;
+    }
+
+    return ret;
 }
 
 void px_deinit(struct px_gui *gui)
@@ -37,7 +46,7 @@ void px_clear_buffer(struct px_gui *gui)
     return;
 }
 
-int px_is_run(struct px_gui *gui)
+uint8_t px_is_run(struct px_gui *gui)
 {
     return gui->is_run;
 }

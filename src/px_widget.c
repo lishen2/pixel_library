@@ -57,12 +57,11 @@ void px_widget_render_bitmap(struct px_widget *widget, const struct px_bitmap *b
     }
 
     /* »æÖÆ */
-    ptr = (uint8_t *)bitmap->ptr;
     for (y = img_rect.start_y, offy = 0; y < img_rect.end_y; ++y, ++offy){
+		ptr = (uint8_t *)bitmap->ptr + offy * bitmap->width;
         for (x = img_rect.start_x, offx = 0; x < img_rect.end_x; ++x, ++offx){
             widget->gui->buf.buf[y][x] = ptr[offx];
         }
-        ptr += offy * bitmap->width;
     }
 
     return;
@@ -115,7 +114,7 @@ void px_widget_render_fill(struct px_widget *widget, uint8_t gray_scale)
     return;
 }
 
-int px_widget_is_hot(struct px_widget *widget)
+uint8_t px_widget_is_hot(struct px_widget *widget)
 {
     struct px_mouse *mouse;
     struct px_rect *prect;
@@ -130,11 +129,11 @@ int px_widget_is_hot(struct px_widget *widget)
     }
 }
 
-int px_widget_is_active(struct px_widget *widget)
+uint8_t px_widget_is_active(struct px_widget *widget)
 {
     struct px_mouse *mouse;
     
-    int ret;
+    uint8_t ret;
 
     mouse = &widget->gui->mouse;
     if (1 == mouse->is_down){
@@ -143,6 +142,70 @@ int px_widget_is_active(struct px_widget *widget)
         ret = 0;
     }
 
+    return ret;
+}
+
+uint8_t px_widget_event_enter_hot(struct px_widget *widget)
+{
+    int ret;
+    uint8_t is_hot;
+
+    is_hot = px_widget_is_hot(widget);
+    if (0 == widget->event_hot && 1 == is_hot){
+        ret = 1;
+    } else {
+        ret = 0;
+    }
+    widget->event_hot = is_hot;
+    
+    return ret;
+}
+
+uint8_t px_widget_event_leave_hot(struct px_widget *widget)
+{
+    uint8_t ret;
+    uint8_t is_hot;
+
+    is_hot = px_widget_is_hot(widget);
+    if (1 == widget->event_hot && 0 == is_hot){
+        ret = 1;
+    } else {
+        ret = 0;
+    }
+    widget->event_hot = is_hot;
+    
+    return ret;
+}
+
+uint8_t px_widget_event_active(struct px_widget *widget)
+{
+    uint8_t ret;
+    uint8_t is_active;
+
+    is_active = px_widget_is_active(widget);
+    if (0 == widget->event_active && 1 == is_active){
+        ret = 1;
+    } else {
+        ret = 0;
+    }
+    widget->event_active = is_active;
+    
+    return ret;
+}
+
+uint8_t px_widget_event_deactive(struct px_widget *widget)
+{
+    uint8_t ret;
+    uint8_t is_active;
+
+    is_active = px_widget_is_active(widget);
+    if (1 == widget->event_active && 0 == is_active){
+        ret = 1;
+    } else {
+        ret = 0;
+    }
+    widget->event_active = is_active;
+    
     return ret;
 }
 

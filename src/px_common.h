@@ -11,6 +11,10 @@
 #define SYMBOL_EXPORT
 #endif
 
+#define ASSERT(exp)\
+    if (!(exp)){\
+        px_printf("ASSERT: %s:%d\r\n", __FUNCTION__, __LINE__);\
+    }
 
 #endif
 
